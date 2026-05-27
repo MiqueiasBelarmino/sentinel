@@ -41,6 +41,25 @@ export default function Dashboard() {
       setLastUpdated(new Date());
       setError(null);
 
+      // Verificações Globais da VPS
+      if (sys.cpu > 90) {
+        toast.warning(`Atenção: CPU da VPS está muito alta (${sys.cpu}%)`, { id: 'vps-cpu' });
+      } else {
+        toast.dismiss('vps-cpu');
+      }
+
+      if (sys.memory.percent > 90) {
+        toast.warning(`Atenção: RAM da VPS quase esgotada (${sys.memory.percent}%)`, { id: 'vps-ram' });
+      } else {
+        toast.dismiss('vps-ram');
+      }
+
+      if (sys.disk && sys.disk.percent > 90) {
+        toast.warning(`Atenção: Disco da VPS quase cheio (${sys.disk.percent}%)`, { id: 'vps-disk' });
+      } else {
+        toast.dismiss('vps-disk');
+      }
+
       // Verificações de limites de recursos (Processos PM2)
       procs.forEach((p) => {
         if (p.status !== 'online') return;
