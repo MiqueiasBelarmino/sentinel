@@ -12,6 +12,7 @@ export default function Dashboard() {
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [deploying, setDeploying] = useState<'api' | 'web' | null>(null);
+  const [autoRefreshInterval, setAutoRefreshInterval] = useState<number>(0);
 
   const handleDeploy = async (project: 'api' | 'web') => {
     if (deploying) return;
@@ -49,6 +50,15 @@ export default function Dashboard() {
     fetchData();
   }, [fetchData]);
 
+  useEffect(() => {
+    if (autoRefreshInterval > 0) {
+      const intervalId = setInterval(() => {
+        fetchData();
+      }, autoRefreshInterval);
+      return () => clearInterval(intervalId);
+    }
+  }, [autoRefreshInterval, fetchData]);
+
   const timeStr = lastUpdated
     ? lastUpdated.toLocaleTimeString('pt-BR', {
         hour: '2-digit',
@@ -68,7 +78,29 @@ export default function Dashboard() {
             {lastUpdated ? `Atualizado às ${timeStr}` : 'Carregando…'}
           </div>
         </div>
-        <div className="header-actions">
+        <div className="header-actions" style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+          <select 
+            value={autoRefreshInterval} 
+            onChange={(e) => setAutoRefreshInterval(Number(e.target.value))}
+            style={{
+              padding: '0 8px',
+              height: '32px',
+              fontSize: '12px',
+              border: '1px solid var(--border)',
+              borderRadius: '6px',
+              background: 'var(--card-bg)',
+              color: 'var(--text-main)',
+              outline: 'none',
+              cursor: 'pointer'
+            }}
+          >
+            <option value={0}>Auto: Desativado</option>
+            <option value={5000}>5s</option>
+            <option value={10000}>10s</option>
+            <option value={20000}>20s</option>
+            <option value={60000}>1m</option>
+            <option value={300000}>5m</option>
+          </select>
           <button
             className="btn btn-ghost btn-sm"
             onClick={() => fetchData(true)}
