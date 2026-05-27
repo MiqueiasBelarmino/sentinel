@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { RefreshCw, AlertCircle, Rocket } from 'lucide-react';
-import { getSystem, getProcesses, triggerDeploy, SystemInfo, Process, formatBytes } from '../lib/api';
+import { getSystem, getProcesses, getHealthChecks, triggerDeploy, SystemInfo, Process, HealthCheck, formatBytes } from '../lib/api';
 import { toast } from 'sonner';
 import SystemCards from '../components/SystemCards';
 import ProcessTable from '../components/ProcessTable';
@@ -8,6 +8,7 @@ import ProcessTable from '../components/ProcessTable';
 export default function Dashboard() {
   const [system, setSystem] = useState<SystemInfo | null>(null);
   const [processes, setProcesses] = useState<Process[]>([]);
+  const [healthChecks, setHealthChecks] = useState<HealthCheck[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -33,9 +34,10 @@ export default function Dashboard() {
   const fetchData = useCallback(async (isManual = false) => {
     if (isManual) setRefreshing(true);
     try {
-      const [sys, procs] = await Promise.all([getSystem(), getProcesses()]);
+      const [sys, procs, healths] = await Promise.all([getSystem(), getProcesses(), getHealthChecks()]);
       setSystem(sys);
       setProcesses(procs);
+      setHealthChecks(healths);
       setLastUpdated(new Date());
       setError(null);
 
@@ -55,6 +57,15 @@ export default function Dashboard() {
           toast.warning(`Alto uso de RAM (${formatBytes(p.memory)}) no processo: ${p.name}`, { id: `ram-${p.id}` });
         } else {
           toast.dismiss(`ram-${p.id}`);
+        }
+      });
+
+      // Verificações de Health Checks (APIs Indisponíveis)
+      healths.forEach((h) => {
+        if (h.status === 'offline') {
+          toast.error(`Serviço Indisponível: ${h.name}`, { id: `health-${h.url}`, duration: 10000 });
+        } else {
+          toast.dismiss(`health-${h.url}`);
         }
       });
     } catch (e: unknown) {
@@ -133,6 +144,13 @@ export default function Dashboard() {
       </div>
 
       <div className="page-content">
+        {healthChecks.some(h => h.status === 'offline') && (
+          <div className="alert" style={{ marginBottom: '24px', backgroundColor: 'var(--error)', color: '#fff', border: 'none', fontWeight: 500 }}>
+            <AlertCircle size={18} />
+            🚨 Atenção: Os seguintes serviços estão offline — {healthChecks.filter(h => h.status === 'offline').map(h => h.name).join(', ')}
+          </div>
+        )}
+
         {error && (
           <div className="alert alert-error">
             <AlertCircle size={15} />
