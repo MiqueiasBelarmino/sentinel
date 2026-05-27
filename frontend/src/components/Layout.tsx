@@ -1,5 +1,6 @@
-import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, LogOut, Shield, Activity } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { NavLink, useLocation } from 'react-router-dom';
+import { LayoutDashboard, LogOut, Shield, Activity, Menu } from 'lucide-react';
 import { logout } from '../lib/api';
 
 interface LayoutProps {
@@ -8,14 +9,26 @@ interface LayoutProps {
 }
 
 export default function Layout({ children, onLogout }: LayoutProps) {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const location = useLocation();
+
   const handleLogout = async () => {
     await logout().catch(() => {});
     onLogout();
   };
 
+  // Close mobile menu when route changes
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [location.pathname]);
+
   return (
     <div className="app-layout">
-      <aside className="sidebar">
+      {isMobileMenuOpen && (
+        <div className="sidebar-overlay" onClick={() => setIsMobileMenuOpen(false)} />
+      )}
+      
+      <aside className={`sidebar ${isMobileMenuOpen ? 'open' : ''}`}>
         <div className="sidebar-logo">
           <div className="logo-icon-wrap">
             <Shield size={18} color="#fff" strokeWidth={2.5} />
@@ -52,7 +65,15 @@ export default function Layout({ children, onLogout }: LayoutProps) {
         </div>
       </aside>
 
-      <div className="main-content">{children}</div>
+      <div className="main-content">
+        <div className="mobile-header">
+          <button className="mobile-menu-btn" onClick={() => setIsMobileMenuOpen(true)}>
+            <Menu size={20} />
+          </button>
+          <div className="mobile-header-title">Sentinel</div>
+        </div>
+        {children}
+      </div>
     </div>
   );
 }
