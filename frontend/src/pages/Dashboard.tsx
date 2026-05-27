@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { RefreshCw, AlertCircle, Rocket } from 'lucide-react';
-import { getSystem, getProcesses, triggerDeploy, SystemInfo, Process } from '../lib/api';
+import { getSystem, getProcesses, triggerDeploy, SystemInfo, Process, formatBytes } from '../lib/api';
+import { toast } from 'sonner';
 import SystemCards from '../components/SystemCards';
 import ProcessTable from '../components/ProcessTable';
 
@@ -37,6 +38,25 @@ export default function Dashboard() {
       setProcesses(procs);
       setLastUpdated(new Date());
       setError(null);
+
+      // Verificações de limites de recursos (Processos PM2)
+      procs.forEach((p) => {
+        if (p.status !== 'online') return;
+
+        // Limite de CPU: 80%
+        if (p.cpu > 80) {
+          toast.warning(`Alto uso de CPU (${p.cpu}%) no processo: ${p.name}`, { id: `cpu-${p.id}` });
+        } else {
+          toast.dismiss(`cpu-${p.id}`);
+        }
+
+        // Limite de Memória RAM: 500MB (500 * 1024 * 1024)
+        if (p.memory > 524288000) {
+          toast.warning(`Alto uso de RAM (${formatBytes(p.memory)}) no processo: ${p.name}`, { id: `ram-${p.id}` });
+        } else {
+          toast.dismiss(`ram-${p.id}`);
+        }
+      });
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : String(e);
       setError(msg);

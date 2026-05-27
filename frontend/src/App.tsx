@@ -6,6 +6,7 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Logs from './pages/Logs';
 import HealthChecks from './pages/HealthChecks';
+import { Toaster } from 'sonner';
 
 type AuthState = 'loading' | 'authenticated' | 'unauthenticated';
 
@@ -29,28 +30,34 @@ export default function App() {
 
   if (authState === 'unauthenticated') {
     return (
-      <BrowserRouter>
-        <Routes>
-          <Route
-            path="/login"
-            element={<Login onLogin={() => setAuthState('authenticated')} />}
-          />
-          <Route path="*" element={<Navigate to="/login" replace />} />
-        </Routes>
-      </BrowserRouter>
+      <>
+        <Toaster position="top-right" richColors />
+        <BrowserRouter>
+          <Routes>
+            <Route
+              path="/login"
+              element={<Login onLogin={() => setAuthState('authenticated')} />}
+            />
+            <Route path="*" element={<Navigate to="/login" replace />} />
+          </Routes>
+        </BrowserRouter>
+      </>
     );
   }
 
   return (
-    <BrowserRouter>
-      <Layout onLogout={() => setAuthState('unauthenticated')}>
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/health" element={<HealthChecks />} />
-          <Route path="/logs/:id" element={<Logs />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </Layout>
-    </BrowserRouter>
+    <>
+      <Toaster position="top-right" richColors />
+      <BrowserRouter>
+        <Layout onLogout={() => setAuthState('unauthenticated')}>
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/health" element={<HealthChecks />} />
+            <Route path="/logs/:id" element={<Logs />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </Layout>
+      </BrowserRouter>
+    </>
   );
 }

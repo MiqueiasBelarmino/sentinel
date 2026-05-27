@@ -86,8 +86,24 @@ export default function ProcessTable({ processes, onRefresh }: Props) {
                 </td>
                 <td className="cell-muted">{formatUptime(p.uptime)}</td>
                 <td className="cell-muted">{p.restarts}</td>
-                <td className="cell-muted">{p.cpu}%</td>
-                <td className="cell-muted">{formatBytes(p.memory)}</td>
+                <td className="cell-muted">
+                  {p.cpu > 80 ? (
+                    <span style={{ color: 'var(--error)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <AlertCircle size={12} /> {p.cpu}%
+                    </span>
+                  ) : (
+                    `${p.cpu}%`
+                  )}
+                </td>
+                <td className="cell-muted">
+                  {p.memory > 524288000 ? (
+                    <span style={{ color: 'var(--error)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <AlertCircle size={12} /> {formatBytes(p.memory)}
+                    </span>
+                  ) : (
+                    formatBytes(p.memory)
+                  )}
+                </td>
                 <td className="cell-mono">{p.pid}</td>
                 <td>
                   <div className="table-actions">
