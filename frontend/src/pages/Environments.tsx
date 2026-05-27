@@ -71,147 +71,150 @@ export default function Environments() {
   const isConfirmed = confirmation === expectedConfirmation;
 
   if (loading) {
-    return <div className="page-loading">Carregando ambiente...</div>;
+    return (
+      <div className="empty-state">
+        <div className="spinner" />
+        <span>Carregando ambiente...</span>
+      </div>
+    );
   }
 
   return (
-    <div className="page-container environments-page">
-      <div className="page-header">
+    <>
+      <div className="main-header">
         <div>
-          <h1 className="page-title">Environment Control</h1>
-          <p className="page-sub">Gerencie os ambientes e rotinas seguras da aplicação.</p>
+          <div className="main-title">Environment Control</div>
+          <div className="main-subtitle">Gerencie os ambientes e rotinas seguras da aplicação.</div>
         </div>
       </div>
 
-      <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px', marginBottom: '20px' }}>
-        
-        {/* Status Card */}
-        <div className="card">
-          <div className="card-header">
-            <h3 className="card-title"><Layers size={16}/> Status Atual</h3>
-          </div>
-          <div className="card-body">
+      <div className="page-content">
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px', marginBottom: '24px' }}>
+          
+          {/* Status Card */}
+          <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: '20px' }}>
+            <div className="section-header">
+              <span className="section-title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Layers size={16}/> Status Atual
+              </span>
+            </div>
+            
             {status ? (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '16px' }}>
                 <div>
-                  <div className="label" style={{ fontSize: '12px', color: '#888', marginBottom: '4px' }}>Projeto</div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 500 }}>
-                    <Server size={14} color="#555" /> {status.project}
+                  <div style={{ fontSize: '11px', textTransform: 'uppercase', color: 'var(--text-secondary)', letterSpacing: '0.05em', marginBottom: '4px', fontWeight: 600 }}>Projeto</div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: 'var(--text-primary)' }}>
+                    <Server size={14} style={{ color: 'var(--text-secondary)' }} /> {status.project}
                   </div>
                 </div>
                 <div>
-                  <div className="label" style={{ fontSize: '12px', color: '#888', marginBottom: '4px' }}>Ambiente Atual</div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 500 }}>
-                    <span className={`status-badge ${status.currentEnv === 'production' ? 'success' : 'warning'}`}>
+                  <div style={{ fontSize: '11px', textTransform: 'uppercase', color: 'var(--text-secondary)', letterSpacing: '0.05em', marginBottom: '4px', fontWeight: 600 }}>Ambiente Atual</div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span className={`status-badge ${status.currentEnv === 'production' ? 'status-online' : 'status-stopped'}`}>
                       {status.currentEnv}
                     </span>
                   </div>
                 </div>
                 <div>
-                  <div className="label" style={{ fontSize: '12px', color: '#888', marginBottom: '4px' }}>Health Check</div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 500 }}>
-                    <Activity size={14} color={status.health === 'healthy' ? '#10b981' : '#ef4444'} /> 
-                    <span style={{ color: status.health === 'healthy' ? '#10b981' : '#ef4444', textTransform: 'capitalize' }}>
+                  <div style={{ fontSize: '11px', textTransform: 'uppercase', color: 'var(--text-secondary)', letterSpacing: '0.05em', marginBottom: '4px', fontWeight: 600 }}>Health Check</div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span className={`status-badge ${status.health === 'healthy' ? 'status-online' : 'status-errored'}`}>
                       {status.health}
                     </span>
                   </div>
                 </div>
                 <div>
-                  <div className="label" style={{ fontSize: '12px', color: '#888', marginBottom: '4px' }}>Database</div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 500, fontFamily: 'monospace', fontSize: '13px' }}>
-                    <Database size={14} color="#555" /> {status.database}
+                  <div style={{ fontSize: '11px', textTransform: 'uppercase', color: 'var(--text-secondary)', letterSpacing: '0.05em', marginBottom: '4px', fontWeight: 600 }}>Database</div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>
+                    <Database size={14} style={{ color: 'var(--text-secondary)' }} /> {status.database}
                   </div>
                 </div>
               </div>
             ) : (
-              <div style={{ color: '#888' }}>Não foi possível carregar o status.</div>
+              <div className="empty-state" style={{ padding: '20px' }}>
+                Não foi possível carregar o status.
+              </div>
             )}
           </div>
-        </div>
 
-        {/* Switch Card */}
-        <div className="card">
-          <div className="card-header">
-            <h3 className="card-title">Trocar Ambiente</h3>
-          </div>
-          <div className="card-body">
-            <form onSubmit={handleSwitch} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+          {/* Switch Card */}
+          <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: '20px' }}>
+            <div className="section-header">
+              <span className="section-title">Trocar Ambiente</span>
+            </div>
+            
+            <form onSubmit={handleSwitch} style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '16px' }}>
               
               <div>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, marginBottom: '6px' }}>Ambiente Alvo</label>
-                <select 
-                  className="input-field" 
-                  value={targetEnv} 
-                  onChange={(e) => {
-                    setTargetEnv(e.target.value);
-                    setConfirmation('');
-                  }}
-                  disabled={switching}
-                  style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px solid #ddd' }}
-                >
-                  <option value="production">Production</option>
-                  <option value="demo">Demo</option>
-                  <option value="testing">Testing</option>
-                </select>
+                <label className="form-label">Ambiente Alvo</label>
+                <div className="input-wrapper">
+                  <select 
+                    className="form-input" 
+                    value={targetEnv} 
+                    onChange={(e) => {
+                      setTargetEnv(e.target.value);
+                      setConfirmation('');
+                    }}
+                    disabled={switching}
+                  >
+                    <option value="production">Production</option>
+                    <option value="demo">Demo</option>
+                    <option value="testing">Testing</option>
+                  </select>
+                </div>
               </div>
 
-              <div style={{ padding: '12px', backgroundColor: '#fffbe1', border: '1px solid #fce883', borderRadius: '6px', fontSize: '13px', color: '#8a6d3b' }}>
-                <strong>Atenção:</strong> Você está mudando a aplicação para o ambiente <strong>{targetEnv}</strong>. 
-                Isso reiniciará a API imediatamente.
+              <div className="alert" style={{ background: 'var(--warning-bg)', border: '1px solid rgba(245, 158, 11, 0.2)', color: 'var(--warning)', margin: 0 }}>
+                <Activity size={16} style={{ flexShrink: 0 }} />
+                <span>Você está mudando para <strong>{targetEnv}</strong>. Isso reiniciará a API imediatamente.</span>
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, marginBottom: '6px' }}>
-                  Digite <strong style={{ userSelect: 'none' }}>{expectedConfirmation}</strong> para confirmar:
+                <label className="form-label" style={{ textTransform: 'none', letterSpacing: 'normal', color: 'var(--text-primary)' }}>
+                  Digite <strong style={{ userSelect: 'none', fontFamily: 'var(--font-mono)', color: 'var(--accent)' }}>{expectedConfirmation}</strong> para confirmar:
                 </label>
-                <input
-                  type="text"
-                  className="input-field"
-                  placeholder={expectedConfirmation}
-                  value={confirmation}
-                  onChange={(e) => setConfirmation(e.target.value)}
-                  disabled={switching}
-                  autoComplete="off"
-                  style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px solid #ddd', fontFamily: 'monospace' }}
-                />
+                <div className="input-wrapper">
+                  <input
+                    type="text"
+                    className="form-input"
+                    placeholder={expectedConfirmation}
+                    value={confirmation}
+                    onChange={(e) => setConfirmation(e.target.value)}
+                    disabled={switching}
+                    autoComplete="off"
+                    style={{ fontFamily: 'var(--font-mono)' }}
+                  />
+                </div>
               </div>
 
               <button 
                 type="submit" 
-                className={`btn ${targetEnv === 'production' ? 'danger' : 'primary'}`}
+                className={`btn ${targetEnv === 'production' ? 'btn-danger-ghost' : 'btn-primary'}`}
                 disabled={!isConfirmed || switching}
-                style={{
-                  padding: '10px',
-                  border: 'none',
-                  borderRadius: '6px',
-                  backgroundColor: !isConfirmed || switching ? '#ccc' : (targetEnv === 'production' ? '#ef4444' : '#3b82f6'),
-                  color: '#fff',
-                  fontWeight: 600,
-                  cursor: !isConfirmed || switching ? 'not-allowed' : 'pointer',
-                  marginTop: '10px'
-                }}
+                style={{ justifyContent: 'center', marginTop: '8px', width: '100%' }}
               >
                 {switching ? 'Executando...' : 'Confirmar e Trocar'}
               </button>
             </form>
           </div>
         </div>
+
+        {/* Logs Output */}
+        {logs && (
+          <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)', borderRadius: 'var(--radius)', overflow: 'hidden' }}>
+            <div style={{ background: 'rgba(0,0,0,0.2)', padding: '12px 16px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Terminal size={14} color="var(--text-secondary)" />
+              <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Logs Operacionais</span>
+            </div>
+            <div style={{ padding: '16px', maxHeight: '400px', overflowY: 'auto' }}>
+              <pre style={{ margin: 0, whiteSpace: 'pre-wrap', fontFamily: 'var(--font-mono)', fontSize: '12px', color: '#a3be8c', lineHeight: '1.6' }}>
+                {logs}
+              </pre>
+            </div>
+          </div>
+        )}
+
       </div>
-
-      {/* Logs Output */}
-      {logs && (
-        <div className="card">
-          <div className="card-header" style={{ borderBottom: '1px solid #333', backgroundColor: '#1e1e1e', color: '#fff', borderTopLeftRadius: '8px', borderTopRightRadius: '8px' }}>
-            <h3 className="card-title" style={{ color: '#fff' }}><Terminal size={16}/> Logs Operacionais</h3>
-          </div>
-          <div className="card-body" style={{ backgroundColor: '#1e1e1e', color: '#a3be8c', padding: '15px', borderBottomLeftRadius: '8px', borderBottomRightRadius: '8px' }}>
-            <pre style={{ margin: 0, whiteSpace: 'pre-wrap', fontFamily: 'monospace', fontSize: '13px', lineHeight: '1.5' }}>
-              {logs}
-            </pre>
-          </div>
-        </div>
-      )}
-
-    </div>
+    </>
   );
 }
