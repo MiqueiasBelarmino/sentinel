@@ -10,9 +10,5 @@
   {
     "name": "Entrega Certa (Web Produção)",
     "url": "https://entregahub.com.br"
-  },
-  {
-    "name": "Webhook Deploy",
-    "url": "http://localhost:9000"
   }
 ]
