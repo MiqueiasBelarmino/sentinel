@@ -10,6 +10,10 @@ import systemRoutes from './routes/system';
 const app = express();
 const PORT = parseInt(process.env.PORT ?? '3333', 10);
 
+// Necessário para que o Express confie no proxy Nginx e cookies
+// funcionem corretamente com HTTPS
+app.set('trust proxy', 1);
+
 app.use(express.json());
 
 // CORS apenas em desenvolvimento (Vite proxy)
@@ -30,6 +34,7 @@ app.use(
     cookie: {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
       maxAge: 8 * 60 * 60 * 1000, // 8 horas
     },
   }),
