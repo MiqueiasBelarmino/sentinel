@@ -50,6 +50,9 @@ export const getLogs = (
 ): Promise<{ lines: string[]; file: string }> =>
   apiFetch(`/api/logs/${id}?lines=${lines}`);
 
+export const triggerDeploy = (project: 'api' | 'web'): Promise<{ message: string }> =>
+  apiFetch(`/api/system/deploy/${project}`, { method: 'POST' });
+
 // ─── Formatters ───────────────────────────────────────────────────────────────
 
 export function formatBytes(bytes: number): string {

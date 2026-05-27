@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import { RefreshCw, AlertCircle } from 'lucide-react';
-import { getSystem, getProcesses, SystemInfo, Process } from '../lib/api';
+import { RefreshCw, AlertCircle, Rocket } from 'lucide-react';
+import { getSystem, getProcesses, triggerDeploy, SystemInfo, Process } from '../lib/api';
 import SystemCards from '../components/SystemCards';
 import ProcessTable from '../components/ProcessTable';
 
@@ -11,6 +11,22 @@ export default function Dashboard() {
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [deploying, setDeploying] = useState<'api' | 'web' | null>(null);
+
+  const handleDeploy = async (project: 'api' | 'web') => {
+    if (deploying) return;
+    setDeploying(project);
+    setError(null);
+    try {
+      await triggerDeploy(project);
+      setTimeout(() => fetchData(true), 3000); // refresh procs in 3s
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : String(e);
+      setError(`Erro no deploy (${project}): ${msg}`);
+    } finally {
+      setTimeout(() => setDeploying(null), 1500);
+    }
+  };
 
   const fetchData = useCallback(async (isManual = false) => {
     if (isManual) setRefreshing(true);
@@ -81,6 +97,34 @@ export default function Dashboard() {
           <>
             <div className="section-label">Status da VPS</div>
             <SystemCards system={system} />
+
+            <div className="section-label" style={{ marginTop: '24px' }}>Ações de Deploy</div>
+            <div style={{ display: 'flex', gap: '10px', marginBottom: '24px' }}>
+              <button
+                className="btn btn-primary"
+                onClick={() => handleDeploy('api')}
+                disabled={deploying !== null}
+              >
+                {deploying === 'api' ? (
+                  <RefreshCw size={15} className="spin-icon" />
+                ) : (
+                  <Rocket size={15} />
+                )}
+                Deploy API
+              </button>
+              <button
+                className="btn btn-primary"
+                onClick={() => handleDeploy('web')}
+                disabled={deploying !== null}
+              >
+                {deploying === 'web' ? (
+                  <RefreshCw size={15} className="spin-icon" />
+                ) : (
+                  <Rocket size={15} />
+                )}
+                Deploy Web
+              </button>
+            </div>
 
             <div className="section-header">
               <span className="section-title">Processos PM2</span>
