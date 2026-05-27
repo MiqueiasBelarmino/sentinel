@@ -15,6 +15,14 @@ export interface Process {
   pid: number;
 }
 
+export interface HealthCheck {
+  name: string;
+  url: string;
+  status: 'online' | 'offline';
+  latency: number;
+  statusCode: number | null;
+}
+
 async function apiFetch(path: string, options?: RequestInit) {
   const res = await fetch(path, { credentials: 'include', ...options });
   if (!res.ok) {
@@ -40,6 +48,8 @@ export const logout = (): Promise<{ ok: boolean }> =>
 export const getSystem = (): Promise<SystemInfo> => apiFetch('/api/system');
 
 export const getProcesses = (): Promise<Process[]> => apiFetch('/api/processes');
+
+export const getHealthChecks = (): Promise<HealthCheck[]> => apiFetch('/api/health');
 
 export const restartProcess = (id: number | string): Promise<{ ok: boolean }> =>
   apiFetch(`/api/processes/${id}/restart`, { method: 'POST' });

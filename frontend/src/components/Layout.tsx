@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, LogOut, Shield } from 'lucide-react';
+import { LayoutDashboard, LogOut, Shield, Activity } from 'lucide-react';
 import { logout } from '../lib/api';
 
 interface LayoutProps {
@@ -34,6 +34,13 @@ export default function Layout({ children, onLogout }: LayoutProps) {
           >
             <LayoutDashboard size={15} />
             Dashboard
+          </NavLink>
+          <NavLink
+            to="/health"
+            className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}
+          >
+            <Activity size={15} />
+            Health Checks
           </NavLink>
         </nav>
 

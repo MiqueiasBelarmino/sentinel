@@ -5,6 +5,7 @@ import Layout from './components/Layout';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Logs from './pages/Logs';
+import HealthChecks from './pages/HealthChecks';
 
 type AuthState = 'loading' | 'authenticated' | 'unauthenticated';
 
@@ -45,6 +46,7 @@ export default function App() {
       <Layout onLogout={() => setAuthState('unauthenticated')}>
         <Routes>
           <Route path="/" element={<Dashboard />} />
+          <Route path="/health" element={<HealthChecks />} />
           <Route path="/logs/:id" element={<Logs />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

@@ -1,0 +1,18 @@
+[
+  {
+    "name": "Entrega Certa (API Local)",
+    "url": "http://localhost:3003"
+  },
+  {
+    "name": "Entrega Certa (API Produção)",
+    "url": "https://entregahub.com.br/api/"
+  },
+  {
+    "name": "Entrega Certa (Web Produção)",
+    "url": "https://entregahub.com.br"
+  },
+  {
+    "name": "Webhook Deploy",
+    "url": "http://localhost:9000"
+  }
+]
