@@ -12,7 +12,7 @@ router.use(requireAuth);
 // GET /api/environments/entrega-certa
 router.get('/entrega-certa', async (_req: Request, res: Response): Promise<void> => {
   try {
-    const API_DIR = process.env.ENTREGA_CERTA_API_DIR || 'C:\\Projetos\\entrega-certa\\api';
+    const API_DIR = process.env.ENTREGA_CERTA_API_DIR || '/root/apps/entrega-certa/api';
     const ENV_PATH = path.join(API_DIR, '.env');
     const HEALTH_URL = process.env.ENTREGA_CERTA_HEALTH_URL || 'http://localhost:3003/health';
 
@@ -23,7 +23,7 @@ router.get('/entrega-certa', async (_req: Request, res: Response): Promise<void>
     if (fs.existsSync(ENV_PATH)) {
       const envContent = fs.readFileSync(ENV_PATH, 'utf-8');
       const lines = envContent.split('\n');
-      
+
       for (const line of lines) {
         if (line.startsWith('APP_ENV=')) {
           currentEnv = line.split('=')[1].replace(/['"]/g, '').trim();
@@ -65,7 +65,7 @@ router.get('/entrega-certa', async (_req: Request, res: Response): Promise<void>
 router.post('/entrega-certa/switch', async (req: Request, res: Response): Promise<void> => {
   const { target } = req.body;
   const ALLOWED_TARGETS = ['production', 'demo', 'testing'];
-  const API_DIR = process.env.ENTREGA_CERTA_API_DIR || 'C:\\Projetos\\entrega-certa\\api';
+  const API_DIR = process.env.ENTREGA_CERTA_API_DIR || '/root/apps/entrega-certa/api';
 
   if (!target || !ALLOWED_TARGETS.includes(target)) {
     res.status(400).json({ error: 'Ambiente alvo inválido ou não autorizado.' });
@@ -74,8 +74,8 @@ router.post('/entrega-certa/switch', async (req: Request, res: Response): Promis
 
   try {
     if (!fs.existsSync(API_DIR)) {
-      res.status(500).json({ 
-        error: 'Diretório da API não encontrado', 
+      res.status(500).json({
+        error: 'Diretório da API não encontrado',
         details: `O caminho configurado (${API_DIR}) não existe no servidor. Configure a variável ENTREGA_CERTA_API_DIR.`
       });
       return;
@@ -83,7 +83,7 @@ router.post('/entrega-certa/switch', async (req: Request, res: Response): Promis
 
     const scriptPath = path.join(API_DIR, 'scripts', 'switch-env.sh');
     const cmd = `bash "${scriptPath}" ${target}`;
-    
+
     const { stdout, stderr } = await execAsync(cmd, { cwd: API_DIR });
 
     res.json({
@@ -95,10 +95,10 @@ router.post('/entrega-certa/switch', async (req: Request, res: Response): Promis
     const msg = e.message || String(e);
     const stdout = e.stdout || '';
     const stderr = e.stderr || '';
-    res.status(500).json({ 
-      error: 'Falha ao trocar de ambiente', 
+    res.status(500).json({
+      error: 'Falha ao trocar de ambiente',
       details: msg,
-      logs: stdout + '\n' + stderr 
+      logs: stdout + '\n' + stderr
     });
   }
 });
