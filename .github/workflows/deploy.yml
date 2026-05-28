@@ -38,6 +38,6 @@ jobs:
             npm run build
 
             echo "→ Restarting backend..."
-            pm2 restart sentinel-backend
+            pm2 restart sentinel-backend --update-env
 
             echo "✓ Deploy concluído"
