@@ -12,7 +12,7 @@ router.use(requireAuth);
 // GET /api/environments/entrega-certa
 router.get('/entrega-certa', async (_req: Request, res: Response): Promise<void> => {
   try {
-    const API_DIR = process.env.ENTREGA_CERTA_API_DIR || '/root/apps/entrega-certa/api';
+    const API_DIR = process.env.ENTREGA_CERTA_API_DIR || '/home/ubuntu/apps/entrega-certa/api';
     const ENV_PATH = path.join(API_DIR, '.env');
     const HEALTH_URL = process.env.ENTREGA_CERTA_HEALTH_URL || 'http://localhost:3003/health';
 
@@ -65,7 +65,7 @@ router.get('/entrega-certa', async (_req: Request, res: Response): Promise<void>
 router.post('/entrega-certa/switch', async (req: Request, res: Response): Promise<void> => {
   const { target } = req.body;
   const ALLOWED_TARGETS = ['production', 'demo', 'testing'];
-  const API_DIR = process.env.ENTREGA_CERTA_API_DIR || '/root/apps/entrega-certa/api';
+  const API_DIR = process.env.ENTREGA_CERTA_API_DIR || '/home/ubuntu/apps/entrega-certa/api';
 
   if (!target || !ALLOWED_TARGETS.includes(target)) {
     res.status(400).json({ error: 'Ambiente alvo inválido ou não autorizado.' });

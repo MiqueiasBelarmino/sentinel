@@ -43,9 +43,9 @@ router.post('/deploy/:project', (req: Request, res: Response): void => {
 
   let scriptPath = '';
   if (project === 'api') {
-    scriptPath = '/root/apps/entrega-certa/deploy-api.sh';
+    scriptPath = '/home/ubuntu/apps/entrega-certa/deploy-api.sh';
   } else if (project === 'web') {
-    scriptPath = '/root/apps/entrega-certa/deploy-web.sh';
+    scriptPath = '/home/ubuntu/apps/entrega-certa/deploy-web.sh';
   } else {
     res.status(400).json({ error: 'Projeto inválido. Use "api" ou "web".' });
     return;

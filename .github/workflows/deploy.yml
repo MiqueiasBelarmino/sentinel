@@ -22,7 +22,7 @@ jobs:
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
             set -e
-            cd /root/apps/sentinel
+            cd /home/ubuntu/apps/sentinel
 
             echo "→ Pulling latest code..."
             git pull origin main
