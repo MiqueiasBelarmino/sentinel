@@ -19,7 +19,7 @@ export default function Environments() {
 
   const fetchStatus = async () => {
     try {
-      const res = await fetch('/api/environments/entrega-certa');
+      const res = await fetch('/api/environments/entrega-hub');
       if (res.ok) {
         const data = await res.json();
         setStatus(data);
@@ -43,7 +43,7 @@ export default function Environments() {
     setLogs('Iniciando troca de ambiente...\n');
 
     try {
-      const res = await fetch('/api/environments/entrega-certa/switch', {
+      const res = await fetch('/api/environments/entrega-hub/switch', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ target: targetEnv })
@@ -90,15 +90,15 @@ export default function Environments() {
 
       <div className="page-content">
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px', marginBottom: '24px' }}>
-          
+
           {/* Status Card */}
           <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: '20px' }}>
             <div className="section-header">
               <span className="section-title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Layers size={16}/> Status Atual
+                <Layers size={16} /> Status Atual
               </span>
             </div>
-            
+
             {status ? (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '16px' }}>
                 <div>
@@ -142,15 +142,15 @@ export default function Environments() {
             <div className="section-header">
               <span className="section-title">Trocar Ambiente</span>
             </div>
-            
+
             <form onSubmit={handleSwitch} style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '16px' }}>
-              
+
               <div>
                 <label className="form-label">Ambiente Alvo</label>
                 <div className="input-wrapper">
-                  <select 
-                    className="form-input" 
-                    value={targetEnv} 
+                  <select
+                    className="form-input"
+                    value={targetEnv}
                     onChange={(e) => {
                       setTargetEnv(e.target.value);
                       setConfirmation('');
@@ -187,8 +187,8 @@ export default function Environments() {
                 </div>
               </div>
 
-              <button 
-                type="submit" 
+              <button
+                type="submit"
                 className={`btn ${targetEnv === 'production' ? 'btn-danger-ghost' : 'btn-primary'}`}
                 disabled={!isConfirmed || switching}
                 style={{ justifyContent: 'center', marginTop: '8px', width: '100%' }}

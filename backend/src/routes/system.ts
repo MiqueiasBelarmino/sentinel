@@ -25,11 +25,11 @@ router.get('/', async (_req: Request, res: Response): Promise<void> => {
       },
       disk: mainDisk
         ? {
-            used: mainDisk.used,
-            size: mainDisk.size,
-            percent: Math.round(mainDisk.use),
-            mount: mainDisk.mount,
-          }
+          used: mainDisk.used,
+          size: mainDisk.size,
+          percent: Math.round(mainDisk.use),
+          mount: mainDisk.mount,
+        }
         : null,
     });
   } catch (e: unknown) {
@@ -43,9 +43,9 @@ router.post('/deploy/:project', (req: Request, res: Response): void => {
 
   let scriptPath = '';
   if (project === 'api') {
-    scriptPath = '/home/ubuntu/apps/entrega-certa/deploy-api.sh';
+    scriptPath = '/home/ubuntu/apps/entrega-hub/deploy-api.sh';
   } else if (project === 'web') {
-    scriptPath = '/home/ubuntu/apps/entrega-certa/deploy-web.sh';
+    scriptPath = '/home/ubuntu/apps/entrega-hub/deploy-web.sh';
   } else {
     res.status(400).json({ error: 'Projeto inválido. Use "api" ou "web".' });
     return;
