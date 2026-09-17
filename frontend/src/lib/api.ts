@@ -23,6 +23,14 @@ export interface HealthCheck {
   statusCode: number | null;
 }
 
+export interface Alert {
+  id: string;
+  projeto: string;
+  tipo: string;
+  mensagem: string;
+  data: string;
+}
+
 async function apiFetch(path: string, options?: RequestInit) {
   const res = await fetch(path, { credentials: 'include', ...options });
   if (!res.ok) {
@@ -50,6 +58,8 @@ export const getSystem = (): Promise<SystemInfo> => apiFetch('/api/system');
 export const getProcesses = (): Promise<Process[]> => apiFetch('/api/processes');
 
 export const getHealthChecks = (): Promise<HealthCheck[]> => apiFetch('/api/health');
+
+export const getAlerts = (): Promise<Alert[]> => apiFetch('/api/alerts');
 
 export const addHealthCheck = (name: string, url: string): Promise<{ ok: boolean }> =>
   apiFetch('/api/health/urls', {
