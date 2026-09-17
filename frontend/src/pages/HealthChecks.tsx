@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import { RefreshCw, AlertCircle, Activity, Globe, Wifi, WifiOff } from 'lucide-react';
-import { getHealthChecks, HealthCheck } from '../lib/api';
+import { RefreshCw, AlertCircle, Activity, Globe, Wifi, WifiOff, Plus, Trash2, X } from 'lucide-react';
+import { getHealthChecks, HealthCheck, addHealthCheck, deleteHealthCheck } from '../lib/api';
 
 export default function HealthChecks() {
   const [checks, setChecks] = useState<HealthCheck[]>([]);
@@ -9,6 +9,11 @@ export default function HealthChecks() {
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [autoRefreshInterval, setAutoRefreshInterval] = useState<number>(0);
+  
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [newName, setNewName] = useState('');
+  const [newUrl, setNewUrl] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const fetchData = useCallback(async (isManual = false) => {
     if (isManual) setRefreshing(true);
@@ -38,6 +43,35 @@ export default function HealthChecks() {
       return () => clearInterval(intervalId);
     }
   }, [autoRefreshInterval, fetchData]);
+
+  const handleAdd = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newName || !newUrl) return;
+    setIsSubmitting(true);
+    try {
+      await addHealthCheck(newName, newUrl);
+      setNewName('');
+      setNewUrl('');
+      setIsModalOpen(false);
+      fetchData(true);
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : String(e);
+      setError(msg);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDelete = async (name: string) => {
+    if (!confirm(`Tem certeza que deseja excluir o projeto ${name}?`)) return;
+    try {
+      await deleteHealthCheck(name);
+      fetchData(true);
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : String(e);
+      setError(msg);
+    }
+  };
 
   const timeStr = lastUpdated
     ? lastUpdated.toLocaleTimeString('pt-BR', {
@@ -79,6 +113,14 @@ export default function HealthChecks() {
             <option value={60000}>1m</option>
           </select>
           <button
+            className="btn btn-primary btn-sm"
+            style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
+            onClick={() => setIsModalOpen(true)}
+          >
+            <Plus size={14} />
+            Adicionar Projeto
+          </button>
+          <button
             className="btn btn-ghost btn-sm"
             onClick={() => fetchData(true)}
             disabled={refreshing}
@@ -113,19 +155,41 @@ export default function HealthChecks() {
                       <Activity size={18} color="var(--primary)" />
                       {check.name}
                     </div>
-                    <div style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '6px',
-                      fontSize: '12px',
-                      fontWeight: 500,
-                      color: isOnline ? 'var(--success)' : 'var(--danger)',
-                      background: isOnline ? 'rgba(34, 197, 94, 0.1)' : 'rgba(239, 68, 68, 0.1)',
-                      padding: '4px 8px',
-                      borderRadius: '12px'
-                    }}>
-                      {isOnline ? <Wifi size={14} /> : <WifiOff size={14} />}
-                      {isOnline ? 'ONLINE' : 'OFFLINE'}
+                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                      <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        fontSize: '12px',
+                        fontWeight: 500,
+                        color: isOnline ? 'var(--success)' : 'var(--danger)',
+                        background: isOnline ? 'rgba(34, 197, 94, 0.1)' : 'rgba(239, 68, 68, 0.1)',
+                        padding: '4px 8px',
+                        borderRadius: '12px'
+                      }}>
+                        {isOnline ? <Wifi size={14} /> : <WifiOff size={14} />}
+                        {isOnline ? 'ONLINE' : 'OFFLINE'}
+                      </div>
+                      <button 
+                        onClick={() => handleDelete(check.name)}
+                        style={{ 
+                          background: 'rgba(255, 255, 255, 0.05)', 
+                          border: '1px solid var(--border)', 
+                          color: 'var(--text-muted)', 
+                          cursor: 'pointer', 
+                          padding: '4px',
+                          borderRadius: '6px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          transition: 'all 0.2s'
+                        }}
+                        onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--danger)'; e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)'; e.currentTarget.style.borderColor = 'rgba(239, 68, 68, 0.3)'; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-muted)'; e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)'; e.currentTarget.style.borderColor = 'var(--border)'; }}
+                        title="Remover Projeto"
+                      >
+                        <Trash2 size={14} />
+                      </button>
                     </div>
                   </div>
                   
@@ -163,10 +227,120 @@ export default function HealthChecks() {
           <div className="empty-state">
             <Activity size={32} style={{ opacity: 0.5, marginBottom: '10px' }} />
             <span>Nenhum health check configurado.</span>
-            <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Edite o arquivo backend/health-urls.json para adicionar URLs.</span>
+            <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Clique em "Adicionar Projeto" para começar a monitorar.</span>
           </div>
         )}
       </div>
+
+      {isModalOpen && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          background: 'rgba(0, 0, 0, 0.5)',
+          backdropFilter: 'blur(4px)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 1000,
+          animation: 'fadeIn 0.2s ease-out'
+        }}>
+          <div style={{
+            background: 'var(--card-bg)',
+            border: '1px solid var(--border)',
+            borderRadius: '12px',
+            width: '100%',
+            maxWidth: '400px',
+            boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.2)',
+            overflow: 'hidden',
+            animation: 'slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 20px', borderBottom: '1px solid var(--border)', background: 'rgba(255, 255, 255, 0.02)' }}>
+              <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Plus size={18} color="var(--primary)" />
+                Novo Projeto
+              </h3>
+              <button 
+                onClick={() => setIsModalOpen(false)}
+                style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '4px' }}
+              >
+                <X size={18} />
+              </button>
+            </div>
+            
+            <form onSubmit={handleAdd} style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                <label style={{ fontSize: '12px', fontWeight: 500, color: 'var(--text-muted)' }}>Nome do Projeto</label>
+                <input 
+                  type="text" 
+                  value={newName}
+                  onChange={e => setNewName(e.target.value)}
+                  placeholder="Ex: API Principal"
+                  required
+                  style={{
+                    padding: '10px 12px',
+                    borderRadius: '8px',
+                    border: '1px solid var(--border)',
+                    background: 'rgba(0, 0, 0, 0.2)',
+                    color: 'var(--text-main)',
+                    fontSize: '14px',
+                    outline: 'none',
+                    transition: 'border-color 0.2s'
+                  }}
+                  onFocus={e => e.target.style.borderColor = 'var(--primary)'}
+                  onBlur={e => e.target.style.borderColor = 'var(--border)'}
+                />
+              </div>
+              
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                <label style={{ fontSize: '12px', fontWeight: 500, color: 'var(--text-muted)' }}>URL Base</label>
+                <input 
+                  type="url" 
+                  value={newUrl}
+                  onChange={e => setNewUrl(e.target.value)}
+                  placeholder="https://meuprojeto.com.br"
+                  required
+                  pattern="https?://.*"
+                  title="A URL deve começar com http:// ou https://"
+                  style={{
+                    padding: '10px 12px',
+                    borderRadius: '8px',
+                    border: '1px solid var(--border)',
+                    background: 'rgba(0, 0, 0, 0.2)',
+                    color: 'var(--text-main)',
+                    fontSize: '14px',
+                    outline: 'none',
+                    transition: 'border-color 0.2s'
+                  }}
+                  onFocus={e => e.target.style.borderColor = 'var(--primary)'}
+                  onBlur={e => e.target.style.borderColor = 'var(--border)'}
+                />
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '8px' }}>
+                <button 
+                  type="button" 
+                  onClick={() => setIsModalOpen(false)}
+                  className="btn btn-ghost"
+                  style={{ fontSize: '13px', padding: '8px 16px' }}
+                >
+                  Cancelar
+                </button>
+                <button 
+                  type="submit" 
+                  disabled={isSubmitting}
+                  className="btn btn-primary"
+                  style={{ fontSize: '13px', padding: '8px 16px' }}
+                >
+                  {isSubmitting ? 'Salvando...' : 'Adicionar'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </>
   );
 }

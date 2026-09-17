@@ -51,6 +51,16 @@ export const getProcesses = (): Promise<Process[]> => apiFetch('/api/processes')
 
 export const getHealthChecks = (): Promise<HealthCheck[]> => apiFetch('/api/health');
 
+export const addHealthCheck = (name: string, url: string): Promise<{ ok: boolean }> =>
+  apiFetch('/api/health/urls', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name, url }),
+  });
+
+export const deleteHealthCheck = (name: string): Promise<{ ok: boolean }> =>
+  apiFetch(`/api/health/urls/${encodeURIComponent(name)}`, { method: 'DELETE' });
+
 export const restartProcess = (id: number | string): Promise<{ ok: boolean }> =>
   apiFetch(`/api/processes/${id}/restart`, { method: 'POST' });
 

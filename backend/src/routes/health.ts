@@ -73,4 +73,66 @@ router.get('/', async (_req: Request, res: Response): Promise<void> => {
   }
 });
 
+router.post('/urls', async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { name, url } = req.body;
+    if (!name || !url) {
+      res.status(400).json({ error: 'Name and URL are required' });
+      return;
+    }
+    
+    // Basic URL validation
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+      res.status(400).json({ error: 'URL must start with http:// or https://' });
+      return;
+    }
+
+    let urls: HealthUrl[] = [];
+    if (fs.existsSync(URLS_FILE)) {
+      const data = fs.readFileSync(URLS_FILE, 'utf-8');
+      urls = JSON.parse(data);
+    }
+
+    if (urls.some(u => u.name === name)) {
+      res.status(400).json({ error: 'A health check with this name already exists' });
+      return;
+    }
+
+    urls.push({ name, url });
+    fs.writeFileSync(URLS_FILE, JSON.stringify(urls, null, 2), 'utf-8');
+    
+    res.status(201).json({ ok: true, message: 'Health check added' });
+  } catch (e: unknown) {
+    const msg = e instanceof Error ? e.message : String(e);
+    res.status(500).json({ error: msg });
+  }
+});
+
+router.delete('/urls/:name', async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { name } = req.params;
+    
+    let urls: HealthUrl[] = [];
+    if (fs.existsSync(URLS_FILE)) {
+      const data = fs.readFileSync(URLS_FILE, 'utf-8');
+      urls = JSON.parse(data);
+    }
+
+    const initialLength = urls.length;
+    urls = urls.filter(u => u.name !== name);
+
+    if (urls.length === initialLength) {
+      res.status(404).json({ error: 'Health check not found' });
+      return;
+    }
+
+    fs.writeFileSync(URLS_FILE, JSON.stringify(urls, null, 2), 'utf-8');
+    
+    res.json({ ok: true, message: 'Health check removed' });
+  } catch (e: unknown) {
+    const msg = e instanceof Error ? e.message : String(e);
+    res.status(500).json({ error: msg });
+  }
+});
+
 export default router;
