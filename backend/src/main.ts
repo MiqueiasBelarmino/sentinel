@@ -8,7 +8,6 @@ import pm2Routes from './routes/pm2';
 import logsRoutes from './routes/logs';
 import systemRoutes from './routes/system';
 import healthRoutes from './routes/health';
-import environmentsRoutes from './routes/environments';
 import alertsRoutes from './routes/alerts';
 import { MonitorService } from './services/monitor';
 
@@ -50,7 +49,6 @@ app.use('/api/system', systemRoutes);
 app.use('/api/processes', pm2Routes);
 app.use('/api/logs', logsRoutes);
 app.use('/api/health', healthRoutes);
-app.use('/api/environments', environmentsRoutes);
 app.use('/api/alerts', alertsRoutes);
 
 // Inicia o monitor de alertas em background

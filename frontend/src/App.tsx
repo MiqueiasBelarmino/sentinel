@@ -6,7 +6,6 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Logs from './pages/Logs';
 import HealthChecks from './pages/HealthChecks';
-import Environments from './pages/Environments';
 import Alerts from './pages/Alerts';
 import { Toaster } from 'sonner';
 
@@ -55,7 +54,6 @@ export default function App() {
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/health" element={<HealthChecks />} />
-            <Route path="/environments" element={<Environments />} />
             <Route path="/alerts" element={<Alerts />} />
             <Route path="/logs/:id" element={<Logs />} />
             <Route path="*" element={<Navigate to="/" replace />} />
