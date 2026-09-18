@@ -12,7 +12,7 @@ interface ServiceState {
   isDown: boolean;
 }
 
-const URLS_FILE = path.join(__dirname, '../../../health-urls.json');
+const URLS_FILE = path.join(__dirname, '../../health-urls.json');
 const stateMap = new Map<string, ServiceState>();
 
 async function fetchWithTimeout(resource: string, options: { timeout?: number } = {}) {
