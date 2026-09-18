@@ -19,9 +19,9 @@ router.get('/', async (_req: Request, res: Response): Promise<void> => {
     res.json({
       cpu: Math.round(load.currentLoad),
       memory: {
-        used: mem.used,
+        used: mem.active,
         total: mem.total,
-        percent: Math.round((mem.used / mem.total) * 100),
+        percent: Math.round((mem.active / mem.total) * 100),
       },
       disk: mainDisk
         ? {
