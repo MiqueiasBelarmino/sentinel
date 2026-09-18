@@ -1,18 +1,18 @@
 [
   {
-    "name": "Entrega Certa (API Local)",
-    "url": "http://localhost:3003"
-  },
-  {
-    "name": "Entrega Certa (API Produção)",
+    "name": "Entrega Hub (API)",
     "url": "https://entregahub.com.br/api/"
   },
   {
-    "name": "Entrega Certa (Web Produção)",
+    "name": "Entrega Hub (Web)",
     "url": "https://entregahub.com.br"
   },
   {
-    "name": "Google",
-    "url": "https://google.com"
+    "name": "VET API",
+    "url": "https://vet.entregahub.com.br/api/"
+  },
+  {
+    "name": "VET Web",
+    "url": "https://vet.entregahub.com.br"
   }
 ]

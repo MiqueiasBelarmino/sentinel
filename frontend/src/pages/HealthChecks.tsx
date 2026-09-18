@@ -139,72 +139,106 @@ export default function HealthChecks() {
             {checks.map((check, idx) => {
               const isOnline = check.status === 'online';
               return (
-                <div key={idx} className="metric-card" style={{ padding: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '14px', overflow: 'hidden' }}>
-                    <div style={{
-                      width: '42px',
-                      height: '42px',
-                      borderRadius: '12px',
-                      background: isOnline ? 'var(--success-bg)' : 'var(--error-bg)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      color: isOnline ? 'var(--success)' : 'var(--error)',
-                      flexShrink: 0
-                    }}>
-                      {isOnline ? <Wifi size={20} /> : <WifiOff size={20} />}
-                    </div>
-                    <div style={{ overflow: 'hidden' }}>
-                      <div style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '14px', marginBottom: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                        {check.name}
-                      </div>
-                      <div style={{ fontSize: '11.5px', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '4px', fontFamily: 'var(--font-mono)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                        <Globe size={11} style={{ flexShrink: 0 }} />
-                        <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{check.url.replace(/^https?:\/\//, '')}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
-                    {isOnline ? (
-                      <div style={{ textAlign: 'right' }}>
-                        <div style={{ fontSize: '15px', fontWeight: 700, color: check.latency > 1000 ? 'var(--warning)' : 'var(--text-primary)', lineHeight: 1 }}>
-                          {check.latency} <span style={{ fontSize: '11px', color: 'var(--text-secondary)', fontWeight: 500 }}>ms</span>
-                        </div>
-                        {check.statusCode && (
-                          <div style={{ fontSize: '10px', color: 'var(--text-secondary)', fontWeight: 600, marginTop: '4px' }}>
-                            HTTP {check.statusCode}
-                          </div>
-                        )}
-                      </div>
-                    ) : (
-                      <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--error)', padding: '4px 8px', background: 'var(--error-bg)', borderRadius: '6px' }}>
-                        OFFLINE
-                      </div>
-                    )}
-                    
-                    <div style={{ width: '1px', height: '32px', background: 'var(--border)', margin: '0 4px' }} />
-                    
-                    <button 
-                      onClick={() => handleDelete(check.name)}
-                      style={{ 
-                        background: 'transparent', 
-                        border: 'none', 
-                        color: 'var(--text-muted)', 
-                        cursor: 'pointer', 
-                        padding: '6px',
-                        borderRadius: '6px',
+                <div key={idx} className="metric-card" style={{ padding: 0, display: 'flex', flexDirection: 'column' }}>
+                  {/* Top Section */}
+                  <div style={{ padding: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '14px', overflow: 'hidden' }}>
+                      <div style={{
+                        width: '42px',
+                        height: '42px',
+                        borderRadius: '12px',
+                        background: isOnline ? 'var(--success-bg)' : 'var(--error-bg)',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        transition: 'all 0.2s'
+                        color: isOnline ? 'var(--success)' : 'var(--error)',
+                        flexShrink: 0
+                      }}>
+                        {isOnline ? <Wifi size={20} /> : <WifiOff size={20} />}
+                      </div>
+                      <div style={{ overflow: 'hidden' }}>
+                        <div style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '15px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          {check.name}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
+                      {isOnline ? (
+                        <div style={{ textAlign: 'right' }}>
+                          <div style={{ fontSize: '15px', fontWeight: 700, color: check.latency > 1000 ? 'var(--warning)' : 'var(--text-primary)', lineHeight: 1 }}>
+                            {check.latency} <span style={{ fontSize: '11px', color: 'var(--text-secondary)', fontWeight: 500 }}>ms</span>
+                          </div>
+                          {check.statusCode && (
+                            <div style={{ fontSize: '10px', color: 'var(--text-secondary)', fontWeight: 600, marginTop: '4px' }}>
+                              HTTP {check.statusCode}
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--error)', padding: '4px 8px', background: 'var(--error-bg)', borderRadius: '6px' }}>
+                          OFFLINE
+                        </div>
+                      )}
+                      
+                      <div style={{ width: '1px', height: '32px', background: 'var(--border)', margin: '0 4px' }} />
+                      
+                      <button 
+                        onClick={() => handleDelete(check.name)}
+                        style={{ 
+                          background: 'transparent', 
+                          border: 'none', 
+                          color: 'var(--text-muted)', 
+                          cursor: 'pointer', 
+                          padding: '6px',
+                          borderRadius: '6px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          transition: 'all 0.2s'
+                        }}
+                        onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--error)'; e.currentTarget.style.background = 'var(--error-bg)'; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-muted)'; e.currentTarget.style.background = 'transparent'; }}
+                        title="Remover Projeto"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Footer Section (URL) */}
+                  <div style={{ 
+                    padding: '8px 16px', 
+                    background: 'rgba(0, 0, 0, 0.2)',
+                    borderTop: '1px solid var(--border)',
+                    fontSize: '11.5px',
+                    color: 'var(--text-secondary)',
+                    fontFamily: 'var(--font-mono)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis'
+                  }}>
+                    <Globe size={11} style={{ flexShrink: 0, opacity: 0.7 }} />
+                    <a 
+                      href={check.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      title={check.url}
+                      style={{ 
+                        color: 'inherit', 
+                        textDecoration: 'none', 
+                        overflow: 'hidden', 
+                        textOverflow: 'ellipsis',
+                        transition: 'color 0.2s'
                       }}
-                      onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--error)'; e.currentTarget.style.background = 'var(--error-bg)'; }}
-                      onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-muted)'; e.currentTarget.style.background = 'transparent'; }}
-                      title="Remover Projeto"
+                      onMouseEnter={(e) => e.currentTarget.style.color = 'var(--accent)'}
+                      onMouseLeave={(e) => e.currentTarget.style.color = 'inherit'}
                     >
-                      <Trash2 size={16} />
-                    </button>
+                      {check.url.replace(/^https?:\/\//, '')}
+                    </a>
                   </div>
                 </div>
               );
