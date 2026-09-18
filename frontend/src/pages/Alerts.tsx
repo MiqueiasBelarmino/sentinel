@@ -45,10 +45,10 @@ export default function Alerts() {
 
   const timeStr = lastUpdated
     ? lastUpdated.toLocaleTimeString('pt-BR', {
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-      })
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+    })
     : '—';
 
   // Extrair opções únicas para os filtros
@@ -65,15 +65,15 @@ export default function Alerts() {
     <>
       <div className="main-header">
         <div>
-          <div className="main-title">Barramento de Alertas</div>
+          <div className="main-title">Monitoramento de Alertas</div>
           <div className="main-subtitle">
             {lastUpdated ? `Atualizado às ${timeStr}` : 'Carregando…'}
           </div>
         </div>
         <div className="header-actions" style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-          <select 
+          <select
             className="select-input"
-            value={autoRefreshInterval} 
+            value={autoRefreshInterval}
             onChange={(e) => setAutoRefreshInterval(Number(e.target.value))}
           >
             <option value={0}>Auto: Desativado</option>
@@ -144,27 +144,27 @@ export default function Alerts() {
                 {filteredAlerts.map(alert => {
                   const date = new Date(alert.data);
                   const isCritical = alert.tipo.toLowerCase().includes('error') || alert.tipo.toLowerCase().includes('critico');
-                  
+
                   return (
                     <tr key={alert.id} style={{ background: isCritical ? 'rgba(239, 68, 68, 0.05)' : 'transparent' }}>
                       <td style={{ color: 'var(--text-muted)' }}>
                         {date.toLocaleDateString('pt-BR')} {date.toLocaleTimeString('pt-BR')}
                       </td>
                       <td>
-                        <span style={{ 
-                          background: 'rgba(255,255,255,0.1)', 
-                          padding: '4px 8px', 
-                          borderRadius: '4px', 
-                          fontSize: '12px' 
+                        <span style={{
+                          background: 'rgba(255,255,255,0.1)',
+                          padding: '4px 8px',
+                          borderRadius: '4px',
+                          fontSize: '12px'
                         }}>
                           {alert.projeto}
                         </span>
                       </td>
                       <td>
-                        <span style={{ 
-                          color: isCritical ? 'var(--danger)' : 'var(--warning)', 
-                          display: 'flex', 
-                          alignItems: 'center', 
+                        <span style={{
+                          color: isCritical ? 'var(--danger)' : 'var(--warning)',
+                          display: 'flex',
+                          alignItems: 'center',
                           gap: '6px',
                           fontWeight: 500
                         }}>

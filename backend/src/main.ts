@@ -10,6 +10,7 @@ import systemRoutes from './routes/system';
 import healthRoutes from './routes/health';
 import environmentsRoutes from './routes/environments';
 import alertsRoutes from './routes/alerts';
+import { MonitorService } from './services/monitor';
 
 const app = express();
 const PORT = parseInt(process.env.PORT ?? '3333', 10);
@@ -51,6 +52,9 @@ app.use('/api/logs', logsRoutes);
 app.use('/api/health', healthRoutes);
 app.use('/api/environments', environmentsRoutes);
 app.use('/api/alerts', alertsRoutes);
+
+// Inicia o monitor de alertas em background
+MonitorService.start();
 
 app.listen(PORT, () => {
   console.log(`[sentinel] backend rodando na porta ${PORT}`);
