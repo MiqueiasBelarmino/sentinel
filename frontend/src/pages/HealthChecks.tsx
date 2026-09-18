@@ -92,19 +92,9 @@ export default function HealthChecks() {
         </div>
         <div className="header-actions" style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
           <select 
+            className="select-input"
             value={autoRefreshInterval} 
             onChange={(e) => setAutoRefreshInterval(Number(e.target.value))}
-            style={{
-              padding: '0 8px',
-              height: '32px',
-              fontSize: '12px',
-              border: '1px solid var(--border)',
-              borderRadius: '6px',
-              background: 'var(--card-bg)',
-              color: 'var(--text-main)',
-              outline: 'none',
-              cursor: 'pointer'
-            }}
           >
             <option value={0}>Auto: Desativado</option>
             <option value={5000}>5s</option>
@@ -145,78 +135,77 @@ export default function HealthChecks() {
             <span>Verificando serviços…</span>
           </div>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '16px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '16px' }}>
             {checks.map((check, idx) => {
               const isOnline = check.status === 'online';
               return (
-                <div key={idx} className="card" style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 600 }}>
-                      <Activity size={18} color="var(--primary)" />
-                      {check.name}
+                <div key={idx} className="metric-card" style={{ padding: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '14px', overflow: 'hidden' }}>
+                    <div style={{
+                      width: '42px',
+                      height: '42px',
+                      borderRadius: '12px',
+                      background: isOnline ? 'var(--success-bg)' : 'var(--error-bg)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: isOnline ? 'var(--success)' : 'var(--error)',
+                      flexShrink: 0
+                    }}>
+                      {isOnline ? <Wifi size={20} /> : <WifiOff size={20} />}
                     </div>
-                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                      <div style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '6px',
-                        fontSize: '12px',
-                        fontWeight: 500,
-                        color: isOnline ? 'var(--success)' : 'var(--danger)',
-                        background: isOnline ? 'rgba(34, 197, 94, 0.1)' : 'rgba(239, 68, 68, 0.1)',
-                        padding: '4px 8px',
-                        borderRadius: '12px'
-                      }}>
-                        {isOnline ? <Wifi size={14} /> : <WifiOff size={14} />}
-                        {isOnline ? 'ONLINE' : 'OFFLINE'}
+                    <div style={{ overflow: 'hidden' }}>
+                      <div style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '14px', marginBottom: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        {check.name}
                       </div>
-                      <button 
-                        onClick={() => handleDelete(check.name)}
-                        style={{ 
-                          background: 'rgba(255, 255, 255, 0.05)', 
-                          border: '1px solid var(--border)', 
-                          color: 'var(--text-muted)', 
-                          cursor: 'pointer', 
-                          padding: '4px',
-                          borderRadius: '6px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          transition: 'all 0.2s'
-                        }}
-                        onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--danger)'; e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)'; e.currentTarget.style.borderColor = 'rgba(239, 68, 68, 0.3)'; }}
-                        onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-muted)'; e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)'; e.currentTarget.style.borderColor = 'var(--border)'; }}
-                        title="Remover Projeto"
-                      >
-                        <Trash2 size={14} />
-                      </button>
+                      <div style={{ fontSize: '11.5px', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '4px', fontFamily: 'var(--font-mono)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        <Globe size={11} style={{ flexShrink: 0 }} />
+                        <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{check.url.replace(/^https?:\/\//, '')}</span>
+                      </div>
                     </div>
-                  </div>
-                  
-                  <div style={{ fontSize: '13px', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '6px', wordBreak: 'break-all' }}>
-                    <Globe size={14} />
-                    {check.url}
                   </div>
 
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 'auto', paddingTop: '12px', borderTop: '1px solid var(--border)' }}>
-                    <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-                      Latência
-                    </div>
-                    <div style={{ fontSize: '13px', fontWeight: 500, color: isOnline ? (check.latency > 1000 ? 'var(--warning)' : 'var(--text-main)') : 'var(--danger)' }}>
-                      {isOnline ? `${check.latency} ms` : '—'}
-                    </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
+                    {isOnline ? (
+                      <div style={{ textAlign: 'right' }}>
+                        <div style={{ fontSize: '15px', fontWeight: 700, color: check.latency > 1000 ? 'var(--warning)' : 'var(--text-primary)', lineHeight: 1 }}>
+                          {check.latency} <span style={{ fontSize: '11px', color: 'var(--text-secondary)', fontWeight: 500 }}>ms</span>
+                        </div>
+                        {check.statusCode && (
+                          <div style={{ fontSize: '10px', color: 'var(--text-secondary)', fontWeight: 600, marginTop: '4px' }}>
+                            HTTP {check.statusCode}
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--error)', padding: '4px 8px', background: 'var(--error-bg)', borderRadius: '6px' }}>
+                        OFFLINE
+                      </div>
+                    )}
+                    
+                    <div style={{ width: '1px', height: '32px', background: 'var(--border)', margin: '0 4px' }} />
+                    
+                    <button 
+                      onClick={() => handleDelete(check.name)}
+                      style={{ 
+                        background: 'transparent', 
+                        border: 'none', 
+                        color: 'var(--text-muted)', 
+                        cursor: 'pointer', 
+                        padding: '6px',
+                        borderRadius: '6px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        transition: 'all 0.2s'
+                      }}
+                      onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--error)'; e.currentTarget.style.background = 'var(--error-bg)'; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-muted)'; e.currentTarget.style.background = 'transparent'; }}
+                      title="Remover Projeto"
+                    >
+                      <Trash2 size={16} />
+                    </button>
                   </div>
-                  
-                  {check.statusCode && (
-                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-                        Status HTTP
-                      </div>
-                      <div style={{ fontSize: '13px', fontWeight: 500 }}>
-                        {check.statusCode}
-                      </div>
-                    </div>
-                  )}
                 </div>
               );
             })}

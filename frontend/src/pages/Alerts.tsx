@@ -72,19 +72,9 @@ export default function Alerts() {
         </div>
         <div className="header-actions" style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
           <select 
+            className="select-input"
             value={autoRefreshInterval} 
             onChange={(e) => setAutoRefreshInterval(Number(e.target.value))}
-            style={{
-              padding: '0 8px',
-              height: '32px',
-              fontSize: '12px',
-              border: '1px solid var(--border)',
-              borderRadius: '6px',
-              background: 'var(--card-bg)',
-              color: 'var(--text-main)',
-              outline: 'none',
-              cursor: 'pointer'
-            }}
           >
             <option value={0}>Auto: Desativado</option>
             <option value={5000}>5s</option>
@@ -115,18 +105,18 @@ export default function Alerts() {
         {!loading && alerts.length > 0 && (
           <div style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
             <select
+              className="select-input"
               value={projectFilter}
               onChange={e => setProjectFilter(e.target.value)}
-              style={{ padding: '8px 12px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--card-bg)', color: 'var(--text-main)', fontSize: '13px' }}
             >
               <option value="all">Todos os Projetos</option>
               {projects.map(p => <option key={p} value={p}>{p}</option>)}
             </select>
 
             <select
+              className="select-input"
               value={typeFilter}
               onChange={e => setTypeFilter(e.target.value)}
-              style={{ padding: '8px 12px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--card-bg)', color: 'var(--text-main)', fontSize: '13px' }}
             >
               <option value="all">Todos os Tipos</option>
               {types.map(t => <option key={t} value={t}>{t}</option>)}
